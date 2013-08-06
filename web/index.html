@@ -63,6 +63,7 @@ Copyright (c) 2013, DB.
     <script type="application/dart">
   import 'package:web_ui/web_ui.dart';
   import 'model.dart';
+  import 'dart:html';
   
   final List<Release> releases = toObservable([]);
   
@@ -80,7 +81,10 @@ Copyright (c) 2013, DB.
     releases.clear();
   }
   
-  main() {}
+  main() {
+    HttpRequest.getString('http://localhost:4040/releases/R23').then(
+      (responseText) => releases.add(new Release(responseText)));
+  }
     </script>
   </body>
 </html>
