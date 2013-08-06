@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<!--
+Copyright (c) 2013, DB.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Pitchfork</title>
+    <link rel="stylesheet" href="base.css" type="text/css" media="screen" />
+  </head>
+  <body>
+    <header>
+      <h1>Pitchfork Control</h1>
+    </header>
+    <nav>
+      <ul>
+        <li><a href="#">Releases</a></li>
+        <li><a href="#">JIRAs</a></li>
+        <li><a href="#">Branches</a></li>
+        <li><a href="#">Teams</a></li>
+        <li class="subscribe"><a href="#">Subscribe via. RSS</a></li>
+      </ul>
+    </nav>
+    
+    <section id="intro">
+      <header>
+        <h2>Branch and Release Management.</h2>
+      </header>
+      <p>Always on top.</p>
+      <img src="images/cash.png" alt="Cash" />
+    </section>
+    
+    <div id="content">
+      <div id="mainContent">
+        <section>
+          <p>
+            <button on-click="addRelease()">Add Release</button>
+            <button on-click="clear()">Clear</button>
+          </p>
+        
+          <ul>
+            <article template class="releaseInfo" repeat="release in releases">
+              <li>{{release.name}}
+                <ul>
+                  <li template repeat="deploymentJIRA in release.deploymentJIRAs">
+                    {{deploymentJIRA.name}}
+                    <input type="text" bind-value="deploymentJIRA.name"/> 
+                  </li>
+                </ul>
+                </li>
+            </article>
+          </ul>
+        </section>
+      </div>
+      <aside>
+        <!-- Sidebar -->
+      </aside>
+    </div>
+
+    <footer>
+    </footer>
+    
+    <script type="application/dart">
+  import 'package:web_ui/web_ui.dart';
+  import 'model.dart';
+  
+  final List<Release> releases = toObservable([]);
+  
+  void addRelease() {
+    var release = new Release("${new DateTime.now()}");
+    releases.add(release);
+    
+    for (release in releases) {
+      release.deploymentJIRAs.add(new DeploymentJIRA("JIRA-1234"));
+    }
+    
+  }
+  
+  void clear() {
+    releases.clear();
+  }
+  
+  main() {}
+    </script>
+  </body>
+</html>
