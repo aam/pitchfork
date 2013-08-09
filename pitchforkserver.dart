@@ -94,10 +94,10 @@ void handleGet(HttpRequest req) {
   res.headers.add(HttpHeaders.CONTENT_TYPE, 'application/json');
   if ("/releases".matchAsPrefix(path) != null) {
     handleGetReleases(req, res);
-  } else if ("/devbranches".matchAsPrefix(path) != null) {
-    handleGetDevBranches(req, res);
-  } else if ("/depbranches".matchAsPrefix(path) != null) {
-    handleGetDepBranches(req, res);
+  } else if ("/devjiras".matchAsPrefix(path) != null) {
+    handleGetDevJIRAs(req, res);
+  } else if ("/depjiras".matchAsPrefix(path) != null) {
+    handleGetDepJIRAs(req, res);
   } else {
     res.write('unsupported request');
   }
@@ -105,51 +105,72 @@ void handleGet(HttpRequest req) {
 }
 
 var releases =
-{'R23': [
-         {
-           'name': 'JIRA123', 
-           'releasenotes' : 'YAML file content', 
-           'devjiras': [
-                        {
-                          'name': 'JIRA2345',
-                          'branches': [
-                                       {'name': 'branch123', 'author': 'Vasily Pupkin'},
-                                       {'name': 'branch124', 'author': 'Ioann Pupanov'}
-                                       ]
-                        },
-                        {
-                          'name': 'JIRA2346',
-                          'branches': [
-                                       {'name': 'branch124', 'author': 'Ioann Pupanov'},
-                                       {'name': 'branch125', 'author': 'Seva Novgorodtsev'}
-                                       ]
-                        }
-                        ]
-         }
-         ], 
-     'R24': [
-             {
-               'name': 'JIRA124', 
-               'releasenotes' : 'YAML file content', 
-               'devjiras': [
-                            {
-                              'name': 'JIRA3345',
-                              'branches': [
-                                           {'name': 'branch133', 'author': 'Vasily Pupkin'},
-                                           {'name': 'branch134', 'author': 'Ioann Pupanov'}
-                                           ]
-                            },
-                            {
-                              'name': 'JIRA3346',
-                              'branches': [
-                                           {'name': 'branch134', 'author': 'Ioann Pupanov'},
-                                           {'name': 'branch135', 'author': 'Seva Novgorodtsev'}
-                                           ]
-                            }
-                            ]
-             }
-         ]};
-
+{'R23': {
+    'name' : 'R23',
+    'depjiras': [
+      {'name': 'JIRA123', 
+        'releasenotes' : 'YAML file content', 
+        'devjiras': [
+          {
+            'name': 'JIRA2345',
+            'branches': [
+              { 'name': 'branch123', 'author': 'Vasily Pupkin' },
+              { 'name': 'branch124', 'author': 'Ioann Pupanov' }
+            ]
+          },
+          {
+            'name': 'JIRA2346',
+            'branches': [
+              {'name': 'branch124', 'author': 'Ioann Pupanov'},
+              {'name': 'branch125', 'author': 'Seva Novgorodtsev'}
+            ]
+          }
+        ]
+      },
+      {'name': 'JIRA133', 
+        'releasenotes' : 'YAML file content', 
+        'devjiras': [
+          {
+            'name': 'JIRA2347',
+            'branches': [
+              { 'name': 'branch123', 'author': 'Vasily Pupkin' },
+              { 'name': 'branch124', 'author': 'Ioann Pupanov' }
+            ]
+          },
+          {
+            'name': 'JIRA2348',
+            'branches': [
+              {'name': 'branch124', 'author': 'Ioann Pupanov'},
+              {'name': 'branch125', 'author': 'Seva Novgorodtsev'}
+            ]
+          }
+        ]
+      }
+     ]
+    },
+   'R24': {
+     'name': 'R24',
+     'depjiras': [
+        {'name': 'JIRA123', 
+          'releasenotes' : 'YAML file content', 
+          'devjiras': [
+            {'name': 'JIRA2345',
+              'branches': [
+                { 'name': 'branch123', 'author': 'Vasily Pupkin' },
+                { 'name': 'branch124', 'author': 'Ioann Pupanov' }
+              ]
+            },
+            {'name': 'JIRA2346',
+              'branches': [
+                {'name': 'branch124', 'author': 'Ioann Pupanov'},
+                {'name': 'branch125', 'author': 'Seva Novgorodtsev'}
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  };
 void handleGetReleases(HttpRequest req, HttpResponse res) {
   // TODO: retrieve list from JIRA
   String path = req.uri.path;
@@ -173,6 +194,6 @@ void handleGetReleases(HttpRequest req, HttpResponse res) {
   }
 }
 
-void handleGetDevBranches(HttpRequest req, HttpResponse res) {
+void handleGetDevJIRAs(HttpRequest req, HttpResponse res) {
   // retrieve list from 
 }

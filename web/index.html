@@ -62,8 +62,9 @@ Copyright (c) 2013, DB.
     
     <script type="application/dart">
   import 'package:web_ui/web_ui.dart';
-  import 'model.dart';
+  import 'dart:json';
   import 'dart:html';
+  import 'model.dart';
   
   final List<Release> releases = toObservable([]);
   
@@ -83,7 +84,42 @@ Copyright (c) 2013, DB.
   
   main() {
     HttpRequest.getString('http://localhost:4040/releases/R23').then(
-      (responseText) => releases.add(new Release(responseText)));
+      (responseText) {
+        var json = parse(
+            responseText, 
+            (key, value) {
+              if (key == "depjiras") {
+                var result = 
+                    value.fold(
+                        [],
+                        (listSoFar, Map listitem) {
+                            listSoFar.add(new DeploymentJIRA.fromJsonMap(listitem));
+                            return listSoFar;
+                        });
+                return result; 
+              } else if (key == "devjiras") {
+                var result = 
+                    value.fold(
+                        [],
+                        (listSoFar, Map listitem) {
+                          listSoFar.add(new DevelopmentJIRA.fromJsonMap(listitem));
+                          return listSoFar;
+                        });
+                return result;
+              } else if (key == "branches") {
+                var result = 
+                    value.fold(
+                        [],
+                        (listSoFar, Map listitem) {
+                          listSoFar.add(new Branch.fromJsonMap(listitem));
+                          return listSoFar;
+                        });
+                return result;
+              }
+              return value;
+            });
+        releases.add(new Release.fromJsonMap(json));
+      });
   }
     </script>
   </body>

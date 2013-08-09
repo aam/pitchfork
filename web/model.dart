@@ -46,7 +46,15 @@ class Release {
   String implementationPlan;
   String eraPlan;
 
-  Release(this.name) : deploymentJIRAs = toObservable([]);
+  Release(this.name, _deploymentJIRAs) {
+    deploymentJIRAs = toObservable(_deploymentJIRAs);
+  }
+  
+  factory Release.fromJsonMap(Map mapJson) {
+    return new Release(
+        mapJson["name"],
+        mapJson["depjiras"]);
+  }
 
   String toString() => "$name ${done ? '(done)' : '(not done)'}";
 }
@@ -55,6 +63,12 @@ class Release {
 class DevelopmentJIRA {
   String name;
   List<Branch> branches;
+  
+  DevelopmentJIRA(this.name, this.branches);
+  
+  factory DevelopmentJIRA.fromJsonMap(Map mapJson) {
+    return new DevelopmentJIRA(mapJson["name"], mapJson["branches"]);
+  }
 }
 
 @observable
@@ -63,13 +77,28 @@ class DeploymentJIRA {
   var releaseNotes;
   List<DevelopmentJIRA> developmentJIRAs;
   
-  DeploymentJIRA(this.name): developmentJIRAs = toObservable([]);
+  DeploymentJIRA(this.name, this.releaseNotes, _developmentJIRAs) {
+    developmentJIRAs = toObservable(_developmentJIRAs);
+  }
   
+  factory DeploymentJIRA.fromJsonMap(Map mapJson) {
+    return new DeploymentJIRA(
+        mapJson["name"],
+        mapJson["releaseNotes"],
+        mapJson["devjiras"]);
+  }
+
   bool loadReleaseNotes(String filenameYAML) {
     releaseNotes = loadYaml(filenameYAML);
   }
 }
 
 class Branch {
-  String path;
+  String author;
+  String name;
+  Branch(this.author, this.name);
+  
+  factory Branch.fromJsonMap(Map mapJson) {
+    return new Branch(mapJson["author"], mapJson["name"]);
+  }
 }
