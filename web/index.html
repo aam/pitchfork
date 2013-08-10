@@ -86,13 +86,18 @@ Copyright (c) 2013, DB.
       File fileReleaseNotes = element.files[0];
       FileReader fr = new FileReader();
       fr.onLoad.listen((ProgressEvent event) {
-        var result = (event.target as FileReader).result;
-        var yamlResult = loadYaml(result);
         var aReleaseNotes = (e.target as Element).parent.query('.releaseNotes');
-        if (yamlResult is YamlMap) {
-          aReleaseNotes.classes..add('valid')
-                               ..remove('invalid');
-        } else {
+        var result = (event.target as FileReader).result;
+        try {
+          var yamlResult = loadYaml(result);
+          if (yamlResult is YamlMap) {
+            aReleaseNotes.classes..add('valid')
+                                 ..remove('invalid');
+          } else {
+            aReleaseNotes.classes..add('invalid')
+                                 ..remove('valid');
+          }
+        } on YamlException catch (e) {
           aReleaseNotes.classes..add('invalid')
                                ..remove('valid');
         }

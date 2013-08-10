@@ -178,15 +178,19 @@ nav {
   }
   
   a.releaseNotes {
-    border: 1px solid red;
+    padding: 5px;
+    color: black;
+    font-size: 80%;
   }  
-
+  
   a.releaseNotes.valid {
-    background: #00ff00;
+    background: #008800;
+    color: white;
   }  
   
   a.releaseNotes.invalid {
-    background: #ff0000;
+    background: #880000;
+    color: lightgray;
   }  
 
   ul.developmentJIRAs {
