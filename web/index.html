@@ -34,22 +34,33 @@ Copyright (c) 2013, DB.
       <div id="mainContent">
         <section>
           <p>
-            <button on-click="addRelease()">Add Release</button>
-            <button on-click="clear()">Clear</button>
-          </p>
-        
-          <ul>
-            <article template class="releaseInfo" repeat="release in releases">
-              <li>{{release.name}}
-                <ul>
-                  <li template repeat="deploymentJIRA in release.deploymentJIRAs">
-                    {{deploymentJIRA.name}}
-                    <input type="text" bind-value="deploymentJIRA.name"/> 
-                  </li>
-                </ul>
+            <ul class="releases">
+              <article template class="releaseInfo" repeat="release in releases">
+                <li>
+                  <a href="#" on-click="triggerRelease($event)">{{release.name}}</a>
+                  <ul class="deploymentJIRAs">
+                    <li template repeat="deploymentJIRA in release.deploymentJIRAs">
+                      {{deploymentJIRA.name}}
+                      <!--<input type="text" bind-value="deploymentJIRA.name"/>-->
+                      <a class="releaseNotes" href="#">Release notes</a> 
+                      <input type="file" on-change="loadReleaseNotes($event);"/>
+                      <ul class="developmentJIRAs">
+                        <li template repeat="developmentJIRA in deploymentJIRA.developmentJIRAs">
+                          {{developmentJIRA.name}}
+                          <input type="text" bind-value="developmentJIRA.name"/> 
+                          <ul class="branches">
+                            <li template repeat="branch in developmentJIRA.branches">
+                              {{branch.name}}
+                              <input type="text" bind-value="branch.name"/> 
+                            </li>
+                          </ul>
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
                 </li>
-            </article>
-          </ul>
+              </article>
+            </ul>
         </section>
       </div>
       <aside>
@@ -62,33 +73,65 @@ Copyright (c) 2013, DB.
     
     <script type="application/dart">
   import 'package:web_ui/web_ui.dart';
+  import 'package:yaml/yaml.dart';
   import 'dart:json';
   import 'dart:html';
   import 'model.dart';
   
   final List<Release> releases = toObservable([]);
+
+  loadReleaseNotes(Event e) {
+    FileUploadInputElement element = e.currentTarget as FileUploadInputElement;
+    if (element.files.length > 0) {
+      File fileReleaseNotes = element.files[0];
+      FileReader fr = new FileReader();
+      fr.onLoad.listen((ProgressEvent event) {
+        var result = (event.target as FileReader).result;
+        var yamlResult = loadYaml(result);
+        var aReleaseNotes = (e.target as Element).parent.query('.releaseNotes');
+        if (yamlResult is YamlMap) {
+          aReleaseNotes.classes..add('valid')
+                               ..remove('invalid');
+        } else {
+          aReleaseNotes.classes..add('invalid')
+                               ..remove('valid');
+        }
+      });
+      fr.readAsText(fileReleaseNotes);
+      
+    }      
+  }
   
-  void addRelease() {
-    var release = new Release("${new DateTime.now()}");
-    releases.add(release);
-    
-    for (release in releases) {
-      release.deploymentJIRAs.add(new DeploymentJIRA("JIRA-1234"));
+  triggerRelease(Event e) {
+    LIElement lie = (e.currentTarget as Element).parent;
+    for (var child in lie.children) {
+      if (child is UListElement) {
+        if (child.style.display == "") {
+          child.style.display = "none";
+        } else {
+          child.style.display = "";
+        }
+      }
     }
-    
   }
   
-  void clear() {
-    releases.clear();
-  }
   
   main() {
-    HttpRequest.getString('http://localhost:4040/releases/R23').then(
+    HttpRequest.getString('http://localhost:4040/releases').then(
       (responseText) {
         var json = parse(
             responseText, 
             (key, value) {
-              if (key == "depjiras") {
+              if (key == "releases") {
+                var result = 
+                    value.fold(
+                        [],
+                        (listSoFar, Map listitem) {
+                            listSoFar.add(new Release.fromJsonMap(listitem));
+                            return listSoFar;
+                        });
+                return result;
+              } else if (key == "depjiras") {
                 var result = 
                     value.fold(
                         [],
@@ -118,7 +161,7 @@ Copyright (c) 2013, DB.
               }
               return value;
             });
-        releases.add(new Release.fromJsonMap(json));
+        releases.addAll(json["releases"]);
       });
   }
     </script>

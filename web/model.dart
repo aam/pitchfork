@@ -93,6 +93,7 @@ class DeploymentJIRA {
   }
 }
 
+@observable
 class Branch {
   String author;
   String name;

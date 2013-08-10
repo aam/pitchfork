@@ -104,72 +104,75 @@ void handleGet(HttpRequest req) {
   res.close();
 }
 
-var releases =
-{'R23': {
-    'name' : 'R23',
-    'depjiras': [
-      {'name': 'JIRA123', 
-        'releasenotes' : 'YAML file content', 
-        'devjiras': [
-          {
-            'name': 'JIRA2345',
-            'branches': [
-              { 'name': 'branch123', 'author': 'Vasily Pupkin' },
-              { 'name': 'branch124', 'author': 'Ioann Pupanov' }
+var info = 
+  { 
+    'releases': [
+      {
+        'name' : 'R23',
+        'depjiras': [
+          {'name': 'JIRA123', 
+            'releasenotes' : 'YAML file content', 
+            'devjiras': [
+              {
+                'name': 'JIRA2345',
+                'branches': [
+                  { 'name': 'branch123', 'author': 'Vasily Pupkin' },
+                  { 'name': 'branch124', 'author': 'Ioann Pupanov' }
+                ]
+              },
+              {
+                'name': 'JIRA2346',
+                'branches': [
+                  {'name': 'branch124', 'author': 'Ioann Pupanov'},
+                  {'name': 'branch125', 'author': 'Seva Novgorodtsev'}
+                ]
+              }
             ]
           },
-          {
-            'name': 'JIRA2346',
-            'branches': [
-              {'name': 'branch124', 'author': 'Ioann Pupanov'},
-              {'name': 'branch125', 'author': 'Seva Novgorodtsev'}
+          {'name': 'JIRA133', 
+            'releasenotes' : 'YAML file content', 
+            'devjiras': [
+              {
+                'name': 'JIRA2347',
+                'branches': [
+                  { 'name': 'branch123', 'author': 'Vasily Pupkin' },
+                  { 'name': 'branch124', 'author': 'Ioann Pupanov' }
+                ]
+              },
+              {
+                'name': 'JIRA2348',
+                'branches': [
+                  {'name': 'branch124', 'author': 'Ioann Pupanov'},
+                  {'name': 'branch125', 'author': 'Seva Novgorodtsev'}
+                ]
+              }
             ]
           }
-        ]
-      },
-      {'name': 'JIRA133', 
-        'releasenotes' : 'YAML file content', 
-        'devjiras': [
-          {
-            'name': 'JIRA2347',
-            'branches': [
-              { 'name': 'branch123', 'author': 'Vasily Pupkin' },
-              { 'name': 'branch124', 'author': 'Ioann Pupanov' }
-            ]
-          },
-          {
-            'name': 'JIRA2348',
-            'branches': [
-              {'name': 'branch124', 'author': 'Ioann Pupanov'},
-              {'name': 'branch125', 'author': 'Seva Novgorodtsev'}
-            ]
-          }
-        ]
-      }
-     ]
-    },
-   'R24': {
-     'name': 'R24',
-     'depjiras': [
-        {'name': 'JIRA123', 
-          'releasenotes' : 'YAML file content', 
-          'devjiras': [
-            {'name': 'JIRA2345',
-              'branches': [
-                { 'name': 'branch123', 'author': 'Vasily Pupkin' },
-                { 'name': 'branch124', 'author': 'Ioann Pupanov' }
-              ]
-            },
-            {'name': 'JIRA2346',
-              'branches': [
-                {'name': 'branch124', 'author': 'Ioann Pupanov'},
-                {'name': 'branch125', 'author': 'Seva Novgorodtsev'}
+         ]
+        },
+       {
+         'name': 'R24',
+         'depjiras': [
+            {'name': 'JIRA123', 
+              'releasenotes' : 'YAML file content', 
+              'devjiras': [
+                {'name': 'JIRA2345',
+                  'branches': [
+                    { 'name': 'branch123', 'author': 'Vasily Pupkin' },
+                    { 'name': 'branch124', 'author': 'Ioann Pupanov' }
+                  ]
+                },
+                {'name': 'JIRA2346',
+                  'branches': [
+                    {'name': 'branch124', 'author': 'Ioann Pupanov'},
+                    {'name': 'branch125', 'author': 'Seva Novgorodtsev'}
+                  ]
+                }
               ]
             }
           ]
         }
-      ]
-    }
+    ]
   };
 void handleGetReleases(HttpRequest req, HttpResponse res) {
   // TODO: retrieve list from JIRA
@@ -178,7 +181,7 @@ void handleGetReleases(HttpRequest req, HttpResponse res) {
   // "/releases" -> list of releases
   //
   if (path == "/releases") {
-    res.write(stringify(new List.from(releases.keys, growable:false)));
+    res.write(stringify(info));
   } else {
     //
     // "/releases/R23" -> release details 
@@ -187,7 +190,7 @@ void handleGetReleases(HttpRequest req, HttpResponse res) {
     Match m = re.firstMatch(path);
     if (m != null) {
       print("looking for release ${m.group(0)}");
-      res.write(stringify(releases[m.group(1)]));
+      res.write(stringify(info["releases"][m.group(1)]));
     } else {
       res.write(stringify({'error': 'invalid release request'}));
     }
