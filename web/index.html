@@ -14,7 +14,7 @@ Copyright (c) 2013, DB.
     </header>
     <nav>
       <ul>
-        <li><a href="#">Releases</a></li>
+        <li class="selected"><a href="#">Releases</a></li>
         <li><a href="#">JIRAs</a></li>
         <li><a href="#">Branches</a></li>
         <li><a href="#">Teams</a></li>
@@ -33,30 +33,39 @@ Copyright (c) 2013, DB.
     <div id="content">
       <div id="mainContent">
         <section>
-          <p>
+          <p></p>
             <ul class="releases">
               <article template class="releaseInfo" repeat="release in releases">
                 <li>
-                  <a href="#" on-click="triggerRelease($event)">{{release.name}}</a>
+                  <div class="releaseName">
+                    <a href="#" on-click="triggerRelease($event)">{{release.name}}</a>
+                  </div>
                   <ul class="deploymentJIRAs">
-                    <li template repeat="deploymentJIRA in release.deploymentJIRAs">
-                      {{deploymentJIRA.name}}
-                      <!--<input type="text" bind-value="deploymentJIRA.name"/>-->
-                      <a class="releaseNotes" href="#">Release notes</a> 
-                      <input type="file" on-change="loadReleaseNotes($event);"/>
-                      <ul class="developmentJIRAs">
-                        <li template repeat="developmentJIRA in deploymentJIRA.developmentJIRAs">
-                          {{developmentJIRA.name}}
-                          <input type="text" bind-value="developmentJIRA.name"/> 
-                          <ul class="branches">
-                            <li template repeat="branch in developmentJIRA.branches">
-                              {{branch.name}}
-                              <input type="text" bind-value="branch.name"/> 
+                    <div class="deploymentJIRAs-container">
+                      <li template repeat="deploymentJIRA in release.deploymentJIRAs">
+                        <div class="deploymentJIRA">
+                          {{deploymentJIRA.name}}
+                          <span class="releaseNotes">
+                            <a class="releaseNotes" href="#">Release notes</a>
+                            <label class="newReleaseNotes">
+                              <input type="file" on-change="loadReleaseNotes($event);" class="file-upload-button"/>
+                            </label>
+                          </span>
+                        </div>
+                        <ul class="developmentJIRAs">
+                          <div class="developmentJIRAs-container">
+                            <li template repeat="developmentJIRA in deploymentJIRA.developmentJIRAs">
+                              {{developmentJIRA.name}}
+                              <ul class="branches">
+                                <li template repeat="branch in developmentJIRA.branches">
+                                  {{branch.name}}
+                                </li>
+                              </ul>
                             </li>
-                          </ul>
-                        </li>
-                      </ul>
-                    </li>
+                           </div>
+                        </ul>
+                      </li>
+                    </div>
                   </ul>
                 </li>
               </article>
@@ -86,7 +95,7 @@ Copyright (c) 2013, DB.
       File fileReleaseNotes = element.files[0];
       FileReader fr = new FileReader();
       fr.onLoad.listen((ProgressEvent event) {
-        var aReleaseNotes = (e.target as Element).parent.query('.releaseNotes');
+        var aReleaseNotes = (e.target as Element).parent.parent.query('.releaseNotes');
         var result = (event.target as FileReader).result;
         try {
           var yamlResult = loadYaml(result);
@@ -108,7 +117,7 @@ Copyright (c) 2013, DB.
   }
   
   triggerRelease(Event e) {
-    LIElement lie = (e.currentTarget as Element).parent;
+    LIElement lie = (e.currentTarget as Element).parent.parent;
     for (var child in lie.children) {
       if (child is UListElement) {
         if (child.style.display == "") {

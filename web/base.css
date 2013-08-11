@@ -160,6 +160,10 @@ nav {
     font-size: 20px;
   }
   
+  ul.releases div.releaseName {
+    margin: 0px 0px 10px 0px;
+  }  
+  
   ul.releases li {
     font-size: 95%;
     padding: 5px;
@@ -173,10 +177,28 @@ nav {
   }
       
   ul.deploymentJIRAs {
-    padding-left: 10px;
-    background: #e3e3f3;
+    background: #d3e3e3;
+    padding: 0px 0px 0px 5px; 
   }
   
+  ul.deploymentJIRAs div.deploymentJIRAs-container {
+    background: #F0F0F0;
+  }  
+  
+  ul.deploymentJIRAs div.deploymentJIRA {
+    padding: 5px 0px 0px 0px;
+    margin: 0px 0px 5px 0px;
+  }  
+  
+  ul.deploymentJIRAs li {
+    padding: 0px 0px 0px 5px;
+    margin: 0px 15px 0px 10px;
+  }  
+  
+  span.releaseNotes {
+    float: right;
+  }
+    
   a.releaseNotes {
     padding: 5px;
     color: black;
@@ -192,16 +214,49 @@ nav {
     background: #880000;
     color: lightgray;
   }  
-
-  ul.developmentJIRAs {
-    padding-left: 10px;
-    background: #d3d3e3;
+  
+  label.newReleaseNotes {
+    width: 79px;
+    height: 22px;
+    background: url(images/btn-choose-file.gif) 0 0 no-repeat;
+    overflow: hidden;
+    cursor: pointer;      
   }
   
+  input.file-upload-button {
+    position: relative;
+    height: 100%;
+    width: 79px;
+    opacity: 0;
+    -moz-opacity: 0;
+    filter:progid:DXImageTransform.Microsoft.Alpha(opacity=0);
+  }  
+
+  ul.developmentJIRAs {
+    background: #a3c3b3; 
+    padding: 0px 0px 0px 5px; 
+  }
+
+  ul.developmentJIRAs li {
+    padding: 5px 0px 0px 0px;
+    margin: 5px 5px 5px 5px;
+  }  
+
+  ul.developmentJIRAs div.developmentJIRAs-container {
+    background: #F0F0F0;
+  }  
+  
+  
   ul.branches {
-    padding-left: 10px;
-    background: #c3c3e3;
-  }     
+    padding-left: 10px; 
+/*    background: #c3d3c3; */
+    font: 13px/22px Courier;
+  }
+
+  ul.branches li {
+    padding: 0px;
+    margin: 0px;
+  }  
   
   aside {
     display: table-cell;
