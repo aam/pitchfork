@@ -116,6 +116,8 @@ Copyright (c) 2013, DB.
     }      
   }
   
+  
+  
   triggerRelease(Event e) {
     LIElement lie = (e.currentTarget as Element).parent.parent;
     for (var child in lie.children) {
@@ -131,6 +133,7 @@ Copyright (c) 2013, DB.
   
   
   main() {
+/*  
     HttpRequest.getString('http://localhost:4040/releases').then(
       (responseText) {
         var json = parse(
@@ -145,7 +148,7 @@ Copyright (c) 2013, DB.
                             return listSoFar;
                         });
                 return result;
-              } else if (key == "depjiras") {
+              } else if (key == "depJIRAs") {
                 var result = 
                     value.fold(
                         [],
@@ -154,7 +157,7 @@ Copyright (c) 2013, DB.
                             return listSoFar;
                         });
                 return result; 
-              } else if (key == "devjiras") {
+              } else if (key == "devJIRAs") {
                 var result = 
                     value.fold(
                         [],
@@ -177,6 +180,31 @@ Copyright (c) 2013, DB.
             });
         releases.addAll(json["releases"]);
       });
+*/      
+
+    HttpRequest.getString('http://127.0.0.1:8887/pitchfork/releases/list').then(
+      (responseText) {
+        var resources = parse(
+          responseText,
+          (key, value) {
+            if (key == 'webResourceList') {
+              return value["resources"];
+            } else if (key == 'resources') {
+              var result = 
+                  value.fold(
+                      [],
+                      (listSoFar, Map listitem) {
+                          listSoFar.add(new Resource.fromJsonMap(listitem));
+                          return listSoFar;
+                      });
+              return result;
+            } else { 
+              return value;
+            }
+          });
+        releases.addAll(resources['webResourceList']);
+      }
+    );
   }
     </script>
   </body>

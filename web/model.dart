@@ -46,14 +46,16 @@ class Release {
   String implementationPlan;
   String eraPlan;
 
-  Release(this.name, _deploymentJIRAs) {
+  Release(this.name, this.implementationPlan, this.eraPlan, _deploymentJIRAs) {
     deploymentJIRAs = toObservable(_deploymentJIRAs);
   }
   
   factory Release.fromJsonMap(Map mapJson) {
     return new Release(
         mapJson["name"],
-        mapJson["depjiras"]);
+        mapJson["implementationPlan"],
+        mapJson["eraPlan"],
+        mapJson["depJIRAs"]);
   }
 
   String toString() => "$name ${done ? '(done)' : '(not done)'}";
@@ -85,7 +87,7 @@ class DeploymentJIRA {
     return new DeploymentJIRA(
         mapJson["name"],
         mapJson["releaseNotes"],
-        mapJson["devjiras"]);
+        mapJson["devJIRAs"]);
   }
 
   bool loadReleaseNotes(String filenameYAML) {
@@ -102,4 +104,19 @@ class Branch {
   factory Branch.fromJsonMap(Map mapJson) {
     return new Branch(mapJson["author"], mapJson["name"]);
   }
+}
+
+class Resource {
+  String description;
+  String url;
+
+  Resource(this.description, this.url);
+  
+  factory Resource.fromJsonMap(Map mapJson) {
+    return new Resource(
+        mapJson["description"],
+        mapJson["url"]);
+  }
+
+  String toString() => "$description $url";
 }
