@@ -35,38 +35,42 @@ Copyright (c) 2013, DB.
         <section>
           <p></p>
             <ul class="releases">
-              <article template class="releaseInfo" repeat="release in releases">
+              <article template class="releaseInfo" repeat="releaseHolder in releases">
                 <li>
                   <div class="releaseName">
-                    <a href="#" on-click="triggerRelease($event)">{{release.name}}</a>
+                    <a href="#" on-click="triggerRelease($event, releaseHolder)">{{releaseHolder.description}}</a>
                   </div>
-                  <ul class="deploymentJIRAs">
-                    <div class="deploymentJIRAs-container">
-                      <li template repeat="deploymentJIRA in release.deploymentJIRAs">
-                        <div class="deploymentJIRA">
-                          {{deploymentJIRA.name}}
-                          <span class="releaseNotes">
-                            <a class="releaseNotes" href="#">Release notes</a>
-                            <label class="newReleaseNotes">
-                              <input type="file" on-change="loadReleaseNotes($event);" class="file-upload-button"/>
-                            </label>
-                          </span>
-                        </div>
-                        <ul class="developmentJIRAs">
-                          <div class="developmentJIRAs-container">
-                            <li template repeat="developmentJIRA in deploymentJIRA.developmentJIRAs">
-                              {{developmentJIRA.name}}
-                              <ul class="branches">
-                                <li template repeat="branch in developmentJIRA.branches">
-                                  {{branch.name}}
+                  <template instantiate="if (releaseHolder.release != null)">
+                    <template instantiate="if (releaseHolder.release.deploymentJIRAs != null)">
+                      <ul class="deploymentJIRAs">
+                        <div class="deploymentJIRAs-container">
+                          <li template repeat="deploymentJIRA in releaseHolder.release.deploymentJIRAs">
+                            <div class="deploymentJIRA">
+                              {{deploymentJIRA.name}}
+                              <span class="releaseNotes">
+                                <a class="releaseNotes" href="#">Release notes</a>
+                                <label class="newReleaseNotes">
+                                  <input type="file" on-change="loadReleaseNotes($event);" class="file-upload-button"/>
+                                </label>
+                              </span>
+                            </div>
+                            <ul class="developmentJIRAs">
+                              <div class="developmentJIRAs-container">
+                                <li template repeat="developmentJIRA in deploymentJIRA.developmentJIRAs">
+                                  {{developmentJIRA.name}}
+                                  <ul class="branches">
+                                    <li template repeat="branch in developmentJIRA.branches">
+                                      {{branch.name}}
+                                    </li>
+                                  </ul>
                                 </li>
-                              </ul>
-                            </li>
-                           </div>
-                        </ul>
-                      </li>
-                    </div>
-                  </ul>
+                               </div>
+                            </ul>
+                          </li>
+                        </div>
+                      </ul>
+                    </template>
+                   </template>
                 </li>
               </article>
             </ul>
@@ -118,7 +122,48 @@ Copyright (c) 2013, DB.
   
   
   
-  triggerRelease(Event e) {
+  triggerRelease(Event e, ReleaseHolder releaseHolder) {
+    HttpRequest.getString(releaseHolder.url).then(
+      (responseText) {
+        var json = parse(
+            responseText, 
+            (key, value) {
+              if (key == "release") {
+                return new Release.fromJsonMap(value);
+              } else if (key == "depJIRAs") {
+                var result = 
+                    value.fold(
+                        [],
+                        (listSoFar, Map listitem) {
+                            listSoFar.add(new DeploymentJIRA.fromJsonMap(listitem));
+                            return listSoFar;
+                        });
+                return result; 
+              } else if (key == "devJIRAs") {
+                var result = 
+                    value.fold(
+                        [],
+                        (listSoFar, Map listitem) {
+                          listSoFar.add(new DevelopmentJIRA.fromJsonMap(listitem));
+                          return listSoFar;
+                        });
+                return result;
+              } else if (key == "branches") {
+                var result = 
+                    value.fold(
+                        [],
+                        (listSoFar, Map listitem) {
+                          listSoFar.add(new Branch.fromJsonMap(listitem));
+                          return listSoFar;
+                        });
+                return result;
+              }
+              return value;
+            });
+        releaseHolder.release = json["release"];
+      }
+    );
+          
     LIElement lie = (e.currentTarget as Element).parent.parent;
     for (var child in lie.children) {
       if (child is UListElement) {
@@ -194,7 +239,7 @@ Copyright (c) 2013, DB.
                   value.fold(
                       [],
                       (listSoFar, Map listitem) {
-                          listSoFar.add(new Resource.fromJsonMap(listitem));
+                          listSoFar.add(new ReleaseHolder.fromJsonMap(listitem));
                           return listSoFar;
                       });
               return result;

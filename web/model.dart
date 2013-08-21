@@ -45,6 +45,7 @@ class Release {
   List<DeploymentJIRA> deploymentJIRAs;
   String implementationPlan;
   String eraPlan;
+  String url;
 
   Release(this.name, this.implementationPlan, this.eraPlan, _deploymentJIRAs) {
     deploymentJIRAs = toObservable(_deploymentJIRAs);
@@ -106,14 +107,16 @@ class Branch {
   }
 }
 
-class Resource {
+@observable
+class ReleaseHolder {
   String description;
   String url;
+  Release release;
 
-  Resource(this.description, this.url);
+  ReleaseHolder(this.description, this.url);
   
-  factory Resource.fromJsonMap(Map mapJson) {
-    return new Resource(
+  factory ReleaseHolder.fromJsonMap(Map mapJson) {
+    return new ReleaseHolder(
         mapJson["description"],
         mapJson["url"]);
   }
