@@ -233,7 +233,9 @@ Copyright (c) 2013, DB.
           responseText,
           (key, value) {
             if (key == 'webResourceList') {
-              return value["resources"];
+              var list = value["resources"];
+              list.sort();
+              return list;
             } else if (key == 'resources') {
               var result = 
                   value.fold(

@@ -108,7 +108,7 @@ class Branch {
 }
 
 @observable
-class ReleaseHolder {
+class ReleaseHolder implements Comparable<ReleaseHolder> {
   String description;
   String url;
   Release release;
@@ -120,6 +120,11 @@ class ReleaseHolder {
         mapJson["description"],
         mapJson["url"]);
   }
+  
+  int compareTo(ReleaseHolder other) {
+    return description.compareTo(other.description);
+  }
 
   String toString() => "$description $url";
 }
+
